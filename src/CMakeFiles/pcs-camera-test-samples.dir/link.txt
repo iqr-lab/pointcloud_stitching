@@ -1,0 +1,1 @@
+/usr/bin/c++  -fopenmp -O3 -rdynamic CMakeFiles/pcs-camera-test-samples.dir/pcs-camera-test-samples.cpp.o -o pcs-camera-test-samples  -lrealsense2 

@@ -1,0 +1,17 @@
+/home/neilsong/Projects/pointcloud-stitching/build/CMakeFiles/edit_cache.dir
+/home/neilsong/Projects/pointcloud-stitching/build/CMakeFiles/rebuild_cache.dir
+/home/neilsong/Projects/pointcloud-stitching/build/CMakeFiles/list_install_components.dir
+/home/neilsong/Projects/pointcloud-stitching/build/CMakeFiles/install.dir
+/home/neilsong/Projects/pointcloud-stitching/build/CMakeFiles/install/local.dir
+/home/neilsong/Projects/pointcloud-stitching/build/CMakeFiles/install/strip.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/pcs-camera-grab-frames.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/pcs-camera-test-samples.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/pcs-camera-optimized.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/pcs-multicamera-client.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/pcs-multicamera-optimized.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/edit_cache.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/rebuild_cache.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/list_install_components.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/install.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/install/local.dir
+/home/neilsong/Projects/pointcloud-stitching/build/src/CMakeFiles/install/strip.dir

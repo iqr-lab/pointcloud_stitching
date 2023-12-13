@@ -1,0 +1,5 @@
+/usr/local/bin/pcs-camera-grab-frames
+/usr/local/bin/pcs-camera-test-samples
+/usr/local/bin/pcs-camera-optimized
+/usr/local/bin/pcs-multicamera-client
+/usr/local/bin/pcs-multicamera-optimized
