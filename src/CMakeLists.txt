@@ -56,10 +56,18 @@ install(
 )
 
 if (BUILD_CLIENT) 
+
+    find_package(PCL 1.12 REQUIRED)
+
+    include_directories(${PCL_INCLUDE_DIRS})
+    link_directories(${PCL_LIBRARY_DIRS})
+    add_definitions(${PCL_DEFINITIONS})
+
     add_executable(pcs-multicamera-client pcs-multicamera-client.cpp)
     target_link_libraries(
         pcs-multicamera-client
         realsense2
+        ${PCL_LIBRARIES}
     )
     set_target_properties(pcs-multicamera-client PROPERTIES COMPILE_FLAGS "-mavx -mfma" )
 
@@ -67,6 +75,7 @@ if (BUILD_CLIENT)
     target_link_libraries(
         pcs-multicamera-optimized
         realsense2
+        ${PCL_LIBRARIES}
     )
 
     install(
