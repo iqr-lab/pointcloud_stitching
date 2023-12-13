@@ -1,1 +1,0 @@
-/usr/bin/c++  -fopenmp -O3 -rdynamic CMakeFiles/pcs-camera-grab-frames.dir/pcs-camera-grab-frames.cpp.o -o pcs-camera-grab-frames  -lrealsense2 

@@ -1,1 +1,0 @@
-/usr/bin/c++  -fopenmp -O3 -rdynamic CMakeFiles/pcs-camera-optimized.dir/pcs-camera-optimized.cpp.o -o pcs-camera-optimized  -lrealsense2 -fopenmp 
