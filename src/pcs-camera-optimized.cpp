@@ -78,8 +78,10 @@ void initSocket(int port) {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(port);
+    
+    auto sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+    if (sockfd < 0) {
         std::cerr << "\nSocket fd not received." << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -188,15 +190,16 @@ int main (int argc, char** argv) {
 
                 // Grab depth and color frames, and map each point to a color value
                 auto frames = pipe.wait_for_frames();
-                auto depth = frames.get_depth_frame();
                 auto color = frames.get_color_frame();
 
                 // if (timer) {
                 //     grab_frame_end_calculate_start = TIME_NOW;
                 // }
+                pc.map_to(color);  // Maps color values to a point in 3D space
+
+                auto depth = frames.get_depth_frame();
 
                 auto pts = pc.calculate(depth);
-                pc.map_to(color);                       // Maps color values to a point in 3D space
 
                 // if (timer) {
                 //     calculate_end = TIME_NOW;
