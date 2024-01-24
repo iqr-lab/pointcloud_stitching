@@ -11,7 +11,7 @@ Scalable, multicamera distributed system for realtime pointcloud stitching in [I
 Different steps of installation are required for installing the realsense camera servers versus the central computing system. The current instructions are for running on Ubuntu 22.04 LTS.
 
 #### Camera servers on the edge
-- Go to the IQR Lab [librealsense guide](https://github.com/IntelRealSense/librealsense) and follow the instructions to install the `librealsense` 2.0 SDK.
+- Go to the IQR Lab [librealsense guide](https://iqr-lab.github.io/docs/computer-vision/intel-realsense.html) and follow the instructions to install the `librealsense` 2.0 SDK.
 - Ensure that your `cmake` version is 3.1 or later. If not, download and install a newer version from the [CMake website](https://cmake.org/download/)
 - Clone [this repository](https://github.com/iqr-lab/pointcloud_stitching) and `cd` into it.
 - Build and install the camera edge server binaries
