@@ -81,6 +81,10 @@ void initSocket(int port) {
     
     auto sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
+    // reuse SOCKET AND ADDRESS/PORT
+    int opt = 1;
+    if(setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR , &opt, sizeof(opt))) perror("setsockopt failed");
+
     if (sockfd < 0) {
         std::cerr << "\nSocket fd not received." << std::endl;
         exit(EXIT_FAILURE);
