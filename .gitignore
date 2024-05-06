@@ -5,3 +5,5 @@ librealsense/
 
 \.DS_Store
 .vscode/settings.json
+calibration/dataset/*
+!calibration/dataset/custom.yaml

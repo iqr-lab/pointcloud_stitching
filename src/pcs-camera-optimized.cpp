@@ -657,14 +657,13 @@ int copyPointCloudXYZRGBToBuffer(rs2::points& pts, const rs2::video_frame& color
         
         int idx = x * cl_bp + y * cl_sb;
 
-        // Might be wrong
-        float x_p = tf_mat[0] * vertices[i].x + tf_mat[1] * vertices[i].y + tf_mat[2] * vertices[i].z + tf_mat[3];
-        float y_p = tf_mat[4] * vertices[i].x + tf_mat[5] * vertices[i].y + tf_mat[6] * vertices[i].z + tf_mat[7];
-        float z_p = tf_mat[8] * vertices[i].x + tf_mat[9] * vertices[i].y + tf_mat[10] * vertices[i].z + tf_mat[11];
+        // float x_p = tf_mat[0] * vertices[i].x + tf_mat[1] * vertices[i].y + tf_mat[2] * vertices[i].z + tf_mat[3];
+        // float y_p = tf_mat[4] * vertices[i].x + tf_mat[5] * vertices[i].y + tf_mat[6] * vertices[i].z + tf_mat[7];
+        // float z_p = tf_mat[8] * vertices[i].x + tf_mat[9] * vertices[i].y + tf_mat[10] * vertices[i].z + tf_mat[11];
         
-        pc_buffer[i * 5    ] = static_cast<short>(x_p * CONV_RATE);
-        pc_buffer[i * 5 + 1] = static_cast<short>(y_p * CONV_RATE);
-        pc_buffer[i * 5 + 2] = static_cast<short>(z_p * CONV_RATE);
+        pc_buffer[i * 5    ] = static_cast<short>( vertices[i].x * CONV_RATE);
+        pc_buffer[i * 5 + 1] = static_cast<short>( vertices[i].y * CONV_RATE);
+        pc_buffer[i * 5 + 2] = static_cast<short>( vertices[i].z * CONV_RATE);
         pc_buffer[i * 5 + 3] = color_data[idx] + (color_data[idx + 1] << 8);
         pc_buffer[i * 5 + 4] = color_data[idx + 2];
     }
@@ -702,22 +701,6 @@ int sendXYZRGBPointcloud(rs2::points pts, rs2::video_frame color, short * buffer
     
     // Size in bytes of the payload
     size = 5 * size * sizeof(short);
-    
-    // if (compress)
-    // {
-    //     std::string comp_buff;
-    //     int comp_size = snappy::Compress((const char*)buffer, size, &comp_buff);
-
-    //     if (send_buffer)
-    //     {
-    //         // copy compressed buffer
-    //         memcpy(&buffer[0] + sizeof(int), (char *)&comp_size, comp_size);
-    //         size = comp_size;
-    //     }else
-    //     {
-    //         return comp_size;
-    //     }
-    // }
     
     if (send_buffer)
     {   

@@ -37,24 +37,17 @@ typedef std::chrono::high_resolution_clock clockTime;
 typedef std::chrono::time_point<clockTime> timePoint;
 typedef std::chrono::duration<double, std::milli> timeMilli;
 
-const int NUM_CAMERAS = 1;
+const int NUM_CAMERAS = 2;
 
-const int CLIENT_PORT = 8000;
-const int SERVER_PORT = 9000;
+// const int CLIENT_PORT = 8000;
+const int SERVER_PORT = 8000;
 const int BUF_SIZE = 5000000;
 const int STITCHED_BUF_SIZE = 32000000;
 const float CONV_RATE = 1000.0;
 const char PULL_XYZ = 'Y';
 const char PULL_XYZRGB = 'Z';
 
-// const std::string MQTT_SERVER_ADDR("tcp://192.168.1.112:1883");
-// const std::string TOPIC("orientation");
-// const std::string MQTT_CLIENT_ID("sewing_machine");
-// const std::string IP_ADDRESS[8] = {"192.168.1.128", "192.168.1.142", "192.168.1.138", "192.168.1.114",
-//                                    "192.168.1.109", "192.168.1.113", "192.168.1.149", "192.168.1.131"};
-const std::string IP_ADDRESS[8] =
-    {"localhost", "localhost", "192.168.1.138", "192.168.1.114",
-     "192.168.1.109", "192.168.1.113", "192.168.1.149", "192.168.1.131"};
+const std::string IP_ADDRESS[NUM_CAMERAS] = {"192.168.2.8", "192.168.2.9"};
 
 int loop_count = 1;
 bool clean = true;
@@ -67,11 +60,10 @@ int framecount = 0;
 int server_sockfd = 0;
 int client_sockfd = 0;
 int sockfd_array[NUM_CAMERAS];
+int socket_array[NUM_CAMERAS];
 short *stitched_buf;
 Eigen::Matrix4f transform[NUM_CAMERAS];
-std::thread pcs_thread[NUM_CAMERAS];
-pcl::visualization::PCLVisualizer viewer("Pointcloud Stitching");
-// mqtt::client client(MQTT_SERVER_ADDR, MQTT_CLIENT_ID);
+std::thread* pcs_thread[NUM_CAMERAS];
 
 // Exit gracefully by closing all open sockets
 void sigintHandler(int dummy)
@@ -134,22 +126,22 @@ void parseArgs(int argc, char **argv)
 }
 
 // Create TCP socket with specific port and IP address.
-int initSocket(int port, std::string ip_addr)
+int initSocket(int port, std::string ip_addr, int index)
 {
 
     std::cout << "i0 port:" << port << "Ip" << ip_addr << std::endl;
 
-    int sockfd;
     struct sockaddr_in serv_addr;
     memset(&serv_addr, 0, sizeof(serv_addr));
+
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
-    inet_pton(AF_INET, ip_addr.c_str(), &serv_addr.sin_addr);
+    serv_addr.sin_addr.s_addr=inet_addr(ip_addr.c_str());
 
     std::cout << "i1" << std::endl;
 
     // Create socket
-    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if ((sockfd_array[index] = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         std::cerr << "Couldn't create socket" << std::endl;
         exit(EXIT_FAILURE);
@@ -158,7 +150,7 @@ int initSocket(int port, std::string ip_addr)
     std::cout << "i2" << std::endl;
 
     // Connect to camera server
-    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    if ((connect(sockfd_array[index], (struct sockaddr *)&serv_addr, sizeof(serv_addr)) ) < 0)
     {
         std::cerr << "Connection failed at " << ip_addr << "." << std::endl;
         exit(EXIT_FAILURE);
@@ -166,46 +158,8 @@ int initSocket(int port, std::string ip_addr)
 
     std::cout << "i3" << std::endl;
 
-    std::cout << "Connection made at " << sockfd << std::endl;
-    return sockfd;
-}
-
-// Creates TCP server socket and connects to the visualizing computer.
-int initServerSocket()
-{
-    struct sockaddr_in serv_addr;
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-    serv_addr.sin_port = htons(SERVER_PORT);
-
-    if ((server_sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
-    {
-        std::cerr << "\nSocket fd not received." << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    if (bind(server_sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        std::cerr << "\nBind failed" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    if (listen(server_sockfd, 3) < 0)
-    {
-        std::cerr << "\nListen failed" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    std::cout << "\nWaiting for VR Headset client..." << std::endl;
-
-    if ((client_sockfd = accept(server_sockfd, NULL, NULL)) < 0)
-    {
-        std::cerr << "\nConnection failed" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    std::cout << "Established connection with unity client_sock: " << client_sockfd << std::endl;
+    std::cout << "Connection made at " << sockfd_array[index] << std::endl;
+    return 0;
 }
 
 // Sends pull request to socket to signal server to send pointcloud data.
@@ -267,24 +221,6 @@ pointCloudXYZRGB::Ptr convertBufferToPointCloudXYZRGB(short *buffer, int size)
     return new_cloud;
 }
 
-int convertPointCloudXYZRGBToBuffer(pointCloudXYZRGB::Ptr cloud, short *buffer)
-{
-    int size = 0;
-
-    for (int i = 0; i < cloud->width; i++)
-    {
-        buffer[size * 5 + 0] = static_cast<short>(cloud->points[i].x * CONV_RATE);
-        buffer[size * 5 + 1] = static_cast<short>(cloud->points[i].y * CONV_RATE);
-        buffer[size * 5 + 2] = static_cast<short>(cloud->points[i].z * CONV_RATE);
-        buffer[size * 5 + 3] = static_cast<short>(cloud->points[i].r) + static_cast<short>(cloud->points[i].g << 8);
-        buffer[size * 5 + 4] = static_cast<short>(cloud->points[i].b);
-
-        size++;
-    }
-
-    return size;
-}
-
 // Reads from the buffer and converts the data into a new XYZRGB pointcloud.
 void updateCloudXYZRGB(int thread_num, int sockfd, pointCloudXYZRGB::Ptr cloud)
 {
@@ -319,36 +255,13 @@ void updateCloudXYZRGB(int thread_num, int sockfd, pointCloudXYZRGB::Ptr cloud)
     }
 }
 
-void send_stitchedXYZRGB(pointCloudXYZRGB::Ptr stitched_cloud)
-{
-    char pull_request[1] = {0};
-
-    // Wait for pull request
-    if (recv(client_sockfd, pull_request, 1, 0) < 0)
-    {
-        std::cout << "Client disconnected" << std::endl;
-        exit(0);
-    }
-    if (pull_request[0] == 'Z')
-    { // Client requests color pointcloud (XYZRGB)
-        int size = convertPointCloudXYZRGBToBuffer(stitched_cloud, &stitched_buf[0] + sizeof(short));
-        size = 5 * size * sizeof(short);
-        memcpy(stitched_buf, &size, sizeof(int));
-
-        write(client_sockfd, (char *)stitched_buf, size + sizeof(int));
-    }
-    else
-    { // Did not receive a correct pull request
-        std::cerr << "Faulty pull request" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-}
-
 // Primary function to update the pointcloud viewer with an XYZRGB pointcloud.
 void runStitching()
 {
     double total;
     timePoint loop_start, loop_end, stitch_start, stitch_end_viewer_start;
+
+    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
 
     std::vector<pointCloudXYZRGB::Ptr, Eigen::aligned_allocator<pointCloudXYZRGB::Ptr>> cloud_ptr(NUM_CAMERAS);
     pointCloudXYZRGB::Ptr stitched_cloud(new pointCloudXYZRGB);
@@ -356,12 +269,7 @@ void runStitching()
 
     std::cout << "-1" << std::endl;
 
-    if (visual)
-    {
-        viewer.setBackgroundColor(0.05, 0.05, 0.05, 0);
-        viewer.addPointCloud(stitched_cloud, cloud_handler, "cloud");
-        viewer.setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 2, "cloud");
-    }
+    viewer->setBackgroundColor(0.05, 0.05, 0.05, 0);
 
     std::cout << "0" << std::endl;
 
@@ -374,7 +282,9 @@ void runStitching()
     }
 
     std::cout << "1" << std::endl;
+    
 
+    int i = 0;
     // Loop until the visualizer is stopped
     while (1)
     {
@@ -390,32 +300,35 @@ void runStitching()
         // Spawn a thread for each camera and update pointcloud, and perform transformation,
         for (int i = 0; i < NUM_CAMERAS; i++)
         {
-            pcs_thread[i] = std::thread(updateCloudXYZRGB, i, sockfd_array[i], cloud_ptr[i]);
+            pcs_thread[i] = new std::thread(updateCloudXYZRGB, i, sockfd_array[i], cloud_ptr[i]);
         }
         // Wait for thread to finish running, then add cloud to stitched cloud
         for (int i = 0; i < NUM_CAMERAS; i++)
         {
-            pcs_thread[i].join();
+            pcs_thread[i]->join();
             *stitched_cloud += *cloud_ptr[i];
         }
 
         if (timer)
             stitch_end_viewer_start = std::chrono::high_resolution_clock::now();
-
+        
         // Update the pointcloud visualizer
         if (visual)
         {
-            viewer.updatePointCloud(stitched_cloud, "cloud");
-            viewer.spinOnce();
+            if (!i) {
+                viewer->addPointCloud<pcl::PointXYZRGB> (stitched_cloud, cloud_handler, "cloud");
+                viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 2, "cloud");
+            }
+            else 
+                viewer->updatePointCloud(stitched_cloud, "cloud");
+            
+            viewer->spinOnce();
+            i++;
 
-            if (viewer.wasStopped())
+            if (viewer->wasStopped())
             {
                 exit(0);
             }
-        }
-        else
-        {
-            send_stitchedXYZRGB(stitched_cloud);
         }
 
         if (timer)
@@ -453,50 +366,19 @@ int main(int argc, char **argv)
     |   0   0   0 1 |    -> We do not use this line (and it has to stay 0,0,0,1)
     */
 
-    transform[0] << -0.69888007, -0.32213748, 0.63858757, -2.22900000,
-        -0.71520905, 0.32290986, -0.61984291, 2.91800000,
-        -0.00653159, -0.88991947, -0.45607091, 0.36400000,
-        0.00000000, 0.00000000, 0.00000000, 1.00000000;
+   
+   // Camera 1 is the global frame
+    transform[1] = Eigen::Matrix4f::Identity();
 
-    transform[1] << -0.96127595, 0.09045863, -0.26031862, 0.31700000,
-        0.27558764, 0.31552831, -0.90801615, 2.83300000,
-        0.00000000, -0.94459469, -0.32823906, 0.38100000,
-        0.00000000, 0.00000000, 0.00000000, 1.00000000;
+    transform[0] << 0.3095945729005884, 0.15605090332772503, -0.9379761809348391, 0.7958280124466286,
+                    0.08588124555647532, 0.9778207108703982, 0.19102635696306536, -0.07456454313124486,
+                    0.9469823715846951, -0.1396952861177252, 0.2893261394072721, 0.5913070180792068,
+                    0.0, 0.0, 0.0, 1.0;
 
-    transform[2] << -0.63305575, 0.28270490, -0.72063747, 2.80300000,
-        0.77409926, 0.22724638, -0.59087175, 2.05500000,
-        -0.00328008, -0.93189968, -0.36270128, 0.42100000,
-        0.00000000, 0.00000000, 0.00000000, 1.00000000;
-
-    transform[3] << 0.17021299, 0.28598815, -0.94299433, 2.51000000,
-        0.98527137, -0.03349883, 0.16768470, -0.27300000,
-        0.01636663, -0.95764743, -0.28747787, 0.35900000,
-        0.00000000, 0.00000000, 0.00000000, 1.00000000;
-
-    transform[4] << 0.72625904, 0.26139935, -0.63578155, 1.90900000,
-        0.68735231, -0.26305364, 0.67701520, -2.81700000,
-        0.00972668, -0.92869433, -0.37071853, 0.37900000,
-        0.00000000, 0.00000000, 0.00000000, 1.00000000;
-
-    transform[5] << 0.98744750, 0.00686296, 0.15779838, -0.57400000,
-        -0.14665062, -0.33120318, 0.93209337, -2.69700000,
-        0.05866025, -0.94353450, -0.32603930, 0.30900000,
-        0.00000000, 0.00000000, 0.00000000, 1.00000000;
-
-    transform[6] << 0.67295609, 0.40193638, 0.62094867, -2.97300000,
-        -0.35777412, -0.55787451, 0.74884826, -0.41700000,
-        0.64740079, -0.72610136, -0.23162261, 0.43400000,
-        0.00000000, 0.00000000, 0.00000000, 1.00000000;
-
-    transform[7] << 0.08929624, -0.21535297, 0.97244500, -2.95700000,
-        -0.67610010, -0.73004840, -0.09958907, -0.33900000,
-        0.73137872, -0.64857723, -0.21079074, 0.33800000,
-        0.00000000, 0.00000000, 0.00000000, 1.00000000;
-
-    sockfd_array[0] = initSocket(CLIENT_PORT, "localhost");
-
-    if (!visual)
-        initServerSocket();
+    for (int i = 0; i < NUM_CAMERAS; i++)
+    {
+        initSocket(SERVER_PORT, IP_ADDRESS[i], i);
+    }
 
     signal(SIGINT, sigintHandler);
 

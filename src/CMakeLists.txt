@@ -50,14 +50,6 @@ if (BUILD_CLIENT)
     link_directories(${PCL_LIBRARY_DIRS})
     add_definitions(${PCL_DEFINITIONS})
 
-    add_executable(pcs-multicamera-client pcs-multicamera-client.cpp)
-    target_link_libraries(
-        pcs-multicamera-client
-        realsense2
-        ${PCL_LIBRARIES}
-    )
-    set_target_properties(pcs-multicamera-client PROPERTIES COMPILE_FLAGS "-mavx -mfma" )
-
     add_executable(pcs-multicamera-optimized pcs-multicamera-optimized.cpp)
     target_link_libraries(
         pcs-multicamera-optimized
@@ -67,7 +59,6 @@ if (BUILD_CLIENT)
 
     install(
         TARGETS
-        pcs-multicamera-client
         pcs-multicamera-optimized
         
         RUNTIME DESTINATION
