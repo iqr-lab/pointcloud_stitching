@@ -13,7 +13,7 @@ Different steps of installation are required for installing the realsense camera
 
 #### Central Computer
 1. Follow the instructions to download and install the `pcl` from their [website](https://pointclouds.org/downloads/). 
-  - Ensure that your `pcl` version is 1.13 or later. If this version is not available in your package manager, you will need to download the source code and build it yourself.
+    - Ensure that your `pcl` version is 1.13 or later. If this version is not available in your package manager, you will need to download the source code and build it yourself.
 1. Clone [this repository](https://github.com/iqr-lab/pointcloud_stitching) and `cd` into it.
 1. Build and compile the central computing system binaries.
   ```
