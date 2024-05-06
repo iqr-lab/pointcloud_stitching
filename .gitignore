@@ -7,3 +7,4 @@ librealsense/
 .vscode/settings.json
 calibration/dataset/*
 !calibration/dataset/custom.yaml
+.vscode
