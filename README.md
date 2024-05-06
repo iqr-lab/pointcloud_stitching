@@ -12,10 +12,10 @@ Note: `host.py` follows the `iqr-vision-i.local` hostnaming convention.
 Different steps of installation are required for installing the realsense camera servers versus the central computing system. The current instructions are for running on Ubuntu 22.04 LTS.
 
 #### Central Computer
-- Follow the instructions to download and install the `pcl` from their [website](https://pointclouds.org/downloads/). 
+1. Follow the instructions to download and install the `pcl` from their [website](https://pointclouds.org/downloads/). 
   - Ensure that your `pcl` version is 1.13 or later. If this version is not available in your package manager, you will need to download the source code and build it yourself.
-- Clone [this repository](https://github.com/iqr-lab/pointcloud_stitching) and `cd` into it.
-- Build and compile the central computing system binaries.
+1. Clone [this repository](https://github.com/iqr-lab/pointcloud_stitching) and `cd` into it.
+1. Build and compile the central computing system binaries.
   ```
   mkdir -p build && cd build
   cmake .. -DBUILD_CLIENT=true
@@ -23,20 +23,20 @@ Different steps of installation are required for installing the realsense camera
   ```
 
 #### Camera Edge Server
-- Go to the IQR Lab [librealsense guide](https://iqr-lab.github.io/docs/computer-vision/intel-realsense.html) and follow the instructions to install the `librealsense` 2.0 SDK.
-- Ensure that your `cmake` version is 3.1 or later. If not, download and install a newer version from the [CMake website](https://cmake.org/download/)
-- There are two methods for obtaining the source
-  1. Release - Clone [this repository](https://github.com/iqr-lab/pointcloud_stitching) into `~/pointcloud_stitching`
-  1. FS Mount - This allows all edge servers to share one, live version of the source
-      1. Create an SSH key on the edge server to the central computer
-      1. Test the key and accept the fingerprint
-      1. Install `sshfs`: `sudo apt install sshfs`
-      1. Modify [`edge_scripts/mount.sh`](edge_scripts/mount.sh) on the central computer with the correct user login, central computer hostname, absolute paths, and identity file
-      1. Add this edge server's hostname to [`HOSTS`](/HOSTS)
-      1. Run `python host.py edge_scripts/mount.sh`
-      1. To set this FS mount as permanent, please follow [these instructions](https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-mount-remote-file-systems-over-ssh#step-3-permanently-mounting-the-remote-filesystem)
-- Ensure that `~/pointcloud_stitching` is the path of the local repo
-- Run `python host.py edge_scripts/build_edge.sh`
+1. Go to the IQR Lab [librealsense guide](https://iqr-lab.github.io/docs/computer-vision/intel-realsense.html) and follow the instructions to install the `librealsense` 2.0 SDK.
+1. Ensure that your `cmake` version is 3.1 or later. If not, download and install a newer version from the [CMake website](https://cmake.org/download/)
+1. There are two methods for obtaining the source
+    1. Release - Clone [this repository](https://github.com/iqr-lab/pointcloud_stitching) into `~/pointcloud_stitching`
+    1. FS Mount - This allows all edge servers to share one, live version of the source
+        1. Create an SSH key on the edge server to the central computer
+        1. Test the key and accept the fingerprint
+        1. Install `sshfs`: `sudo apt install sshfs`
+        1. Modify [`edge_scripts/mount.sh`](edge_scripts/mount.sh) on the central computer with the correct user login, central computer hostname, absolute paths, and identity file
+        1. Add this edge server's hostname to [`HOSTS`](/HOSTS)
+        1. Run `python host.py edge_scripts/mount.sh`
+        1. To set this FS mount as permanent, please follow [these instructions](https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-mount-remote-file-systems-over-ssh#step-3-permanently-mounting-the-remote-filesystem)
+1. Ensure that `~/pointcloud_stitching` is the path of the local repo
+1. Run `python host.py edge_scripts/build_edge.sh`
 
 ## Usage
 Each RealSense is connected to an edge computer, which are all accessible through ssh from the central computer. 
@@ -49,7 +49,7 @@ To start running, do the following:
     ```
   
     If the servers are setup correctly, each one should say `Waiting for client...` 
-2. Then on the central computer, run:
+1. Then on the central computer, run:
     ```
     pcs-multicamera-optimized -v
     ```
