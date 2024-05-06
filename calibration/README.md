@@ -13,7 +13,7 @@ Install the dependencies for this module by running `python host.py edge_scripts
 1. Run `python ../host.py edge_scripts/transfer_images.sh`. If images are still being captured, the script will error and tell you.
 1. Run `python rename.py`
 1. Set the `FOLDER` env var to the absolute path of the local `dataset` directory
-1. Run the following to enter the `kalibr` Docker container terminal. Keep this open in a terminal windows.
+1. Run the following to enter the `kalibr` Docker container terminal. Keep this open in a terminal window.
     ```bash
     xhost +local:root
     docker run -it -e "DISPLAY" -e "QT_X11_NO_MITSHM=1" \
