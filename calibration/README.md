@@ -5,10 +5,10 @@ Calibration is done with the Kalibr toolkit. Ensure that all edge servers are li
 ## Installation
 Install `kalibr` following this [doc](https://iqr.cs.yale.edu/docs/computer-vision/kalibr.html).
 
-Install the dependencies for this module by running `python host.py edge_scripts/calibration_dependencies.sh`. This script assumes you have `uv` properly configured.
+Install the dependencies for this module by running `python ../host.py edge_scripts/calibration_dependencies.sh`. This script assumes you have `uv` properly configured.
 
 ## Dataset Creation
-1. Run `python ../host.py edge_scripts/capture_images.sh`. While this is running, make sure to move the calibration target around the frame for about 20 seconds.
+1. Run `python ../host.py edge_scripts/capture_images.sh`. While this is running, make sure to move the calibration target around for about 20 seconds.
 1. Update the local path and SSH keys as necessary in  [`edge_scripts/transfer_images.sh`](/edge_scripts/transfer_images.sh) 
 1. Run `python ../host.py edge_scripts/transfer_images.sh`. If images are still being captured, the script will error and tell you.
 1. Run `python rename.py`
@@ -29,3 +29,5 @@ Install the dependencies for this module by running `python host.py edge_scripts
 ## Calibration
 1. Generate the calibration command by running `python generate_calibration_command.py`
 1. Run this command inside the `kalibr` container
+1. The calibration results will available at `dataset/dataset-camchain.yaml`. `T_cn_cnm1` is the transformation matrix to the **previous** camera's coordinate system. Keep this in mind when calculating final transformation matrices.
+1. In `/src/pcs-multicamera-optimized.cpp`, adjust the `transform` array as necessary. Make sure to rebuild before running.
