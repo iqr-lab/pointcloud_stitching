@@ -56,4 +56,4 @@ To start running, do the following:
 
     This begins the pointcloud stitching (`-v` for visualizing the pointcloud). 
     
-    For more available options, run `pcs-multicamera-client -h` for help and an explanation of each option.
+    For more available options, run `build/src/pcs-multicamera-optimized -h` for help and an explanation of each option.
