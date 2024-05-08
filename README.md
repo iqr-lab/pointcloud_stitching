@@ -45,13 +45,13 @@ To start running, do the following:
 
 1. SSH to each edge computer and run:
     ```
-    pcs-camera-optimized -s
+    ~/build/src/pcs-camera-optimized -s
     ```
   
     If the servers are setup correctly, each one should say `Waiting for client...` 
 1. Then on the central computer, run:
     ```
-    pcs-multicamera-optimized -v
+    build/src/pcs-multicamera-optimized -v
     ```
 
     This begins the pointcloud stitching (`-v` for visualizing the pointcloud). 
