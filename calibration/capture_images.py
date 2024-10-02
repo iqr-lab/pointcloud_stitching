@@ -43,6 +43,10 @@ def main(folder_name):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Capture images from camera')
     parser.add_argument('folder_name', type=str, help='Folder name to save images')
+    parser.add_argument('--sleep', type=int, default=5, help='Sleep time before starting')
     args = parser.parse_args()
+    if args.sleep:
+        print(f"Sleeping for {args.sleep} seconds before starting")
+        time.sleep(args.sleep)
     main(args.folder_name)
     print("done")

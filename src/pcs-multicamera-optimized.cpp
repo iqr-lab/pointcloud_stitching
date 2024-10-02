@@ -63,7 +63,7 @@ int sockfd_array[NUM_CAMERAS];
 int socket_array[NUM_CAMERAS];
 short *stitched_buf;
 Eigen::Matrix4f transform[NUM_CAMERAS];
-std::thread* pcs_thread[NUM_CAMERAS];
+std::thread *pcs_thread[NUM_CAMERAS];
 
 // Exit gracefully by closing all open sockets
 void sigintHandler(int dummy)
@@ -136,7 +136,7 @@ int initSocket(int port, std::string ip_addr, int index)
 
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
-    serv_addr.sin_addr.s_addr=inet_addr(ip_addr.c_str());
+    serv_addr.sin_addr.s_addr = inet_addr(ip_addr.c_str());
 
     std::cout << "i1" << std::endl;
 
@@ -150,7 +150,7 @@ int initSocket(int port, std::string ip_addr, int index)
     std::cout << "i2" << std::endl;
 
     // Connect to camera server
-    if ((connect(sockfd_array[index], (struct sockaddr *)&serv_addr, sizeof(serv_addr)) ) < 0)
+    if ((connect(sockfd_array[index], (struct sockaddr *)&serv_addr, sizeof(serv_addr))) < 0)
     {
         std::cerr << "Connection failed at " << ip_addr << "." << std::endl;
         exit(EXIT_FAILURE);
@@ -261,7 +261,7 @@ void runStitching()
     double total;
     timePoint loop_start, loop_end, stitch_start, stitch_end_viewer_start;
 
-    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
 
     std::vector<pointCloudXYZRGB::Ptr, Eigen::aligned_allocator<pointCloudXYZRGB::Ptr>> cloud_ptr(NUM_CAMERAS);
     pointCloudXYZRGB::Ptr stitched_cloud(new pointCloudXYZRGB);
@@ -282,7 +282,6 @@ void runStitching()
     }
 
     std::cout << "1" << std::endl;
-    
 
     int i = 0;
     // Loop until the visualizer is stopped
@@ -311,17 +310,18 @@ void runStitching()
 
         if (timer)
             stitch_end_viewer_start = std::chrono::high_resolution_clock::now();
-        
+
         // Update the pointcloud visualizer
         if (visual)
         {
-            if (!i) {
-                viewer->addPointCloud<pcl::PointXYZRGB> (stitched_cloud, cloud_handler, "cloud");
+            if (!i)
+            {
+                viewer->addPointCloud<pcl::PointXYZRGB>(stitched_cloud, cloud_handler, "cloud");
                 viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 2, "cloud");
             }
-            else 
+            else
                 viewer->updatePointCloud(stitched_cloud, "cloud");
-            
+
             viewer->spinOnce();
             i++;
 
@@ -366,14 +366,13 @@ int main(int argc, char **argv)
     |   0   0   0 1 |    -> We do not use this line (and it has to stay 0,0,0,1)
     */
 
-   
-   // Camera 1 is the global frame
+    // Camera 1 is the global frame
     transform[1] = Eigen::Matrix4f::Identity();
 
-    transform[0] << 0.3095945729005884, 0.15605090332772503, -0.9379761809348391, 0.7958280124466286,
-                    0.08588124555647532, 0.9778207108703982, 0.19102635696306536, -0.07456454313124486,
-                    0.9469823715846951, -0.1396952861177252, 0.2893261394072721, 0.5913070180792068,
-                    0.0, 0.0, 0.0, 1.0;
+    transform[0] << 0.5935022481044256, -0.03449428319439147, 0.8040927968349786, -0.8489125400359394,
+        0.09617852335329619, 0.9949615013234632, -0.028307287572989108, 0.0019325393711517556,
+        -0.7990649367483048, 0.09413689665091773, 0.5938294970345968, 0.42644689416334686,
+        0.0, 0.0, 0.0, 1.0;
 
     for (int i = 0; i < NUM_CAMERAS; i++)
     {
