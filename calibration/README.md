@@ -13,11 +13,14 @@ Install the dependencies for this module by running `python host.py edge_scripts
 1. Run `python host.py edge_scripts/capture_images.sh`. While this is running, make sure to move the calibration target around for about 20 seconds.
 1. Update the local path and SSH keys as necessary in  [`edge_scripts/transfer_images.sh`](/edge_scripts/transfer_images.sh) 
 1. Run `python host.py edge_scripts/transfer_images.sh`. If images are still being captured, the script will error and tell you.
-1. Run `python rename.py`
+1. Run `cd calibration && python rename.py`
 1. Set the `FOLDER` env var to the absolute path of the local `dataset` directory
+    ```bash
+    set -x FOLDER $PWD/dataset
+    ```
 1. Run the following to enter the `kalibr` Docker container terminal. Keep this open in a terminal window.
     ```bash
-    xhost +local:root
+    xhost +local:docker
     docker run -it -e "DISPLAY" -e "QT_X11_NO_MITSHM=1" \
         -v "/tmp/.X11-unix:/tmp/.X11-unix:rw" \
         -v "$FOLDER:/data" kalibr
@@ -30,6 +33,15 @@ Install the dependencies for this module by running `python host.py edge_scripts
 
 ## Calibration
 1. Generate the calibration command by running `python generate_calibration_command.py`
-1. Run this command inside the `kalibr` container
+1. Run this outputted command inside the `kalibr` container
 1. The calibration results will available at `dataset/dataset-camchain.yaml`. `T_cn_cnm1` is the transformation matrix to the **previous** camera's coordinate system. Keep this in mind when calculating final transformation matrices.
 1. In `/src/pcs-multicamera-optimized.cpp`, adjust the `transform` array as necessary. Make sure to rebuild before running.
+
+## Ceiling Calibration
+1. The two ceiling cameras can be calibrated but they are relatively tricky - the best result obtained so far is this:
+    ```
+    0.19199692344029018, -0.045889554322095114, -0.9803220543237724, 1.7082854571998982,
+    0.29050534336855743, 0.9567967685195846, 0.012107403718190302, 0.2016156185905812,
+    0.9374133703248414, -0.2871133792678394, 0.1970331966487422, 1.6116656746455273,
+    0.0, 0.0, 0.0, 1.0;
+    ```

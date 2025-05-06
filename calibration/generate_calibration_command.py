@@ -7,7 +7,7 @@ dataset_dirs = sorted([f"/{d.name}/image_raw" for d in dataset_dir.iterdir() if 
 # Convert the list of directory names to a space-separated string
 dataset_dirs_str = " ".join(dataset_dirs)
 
-CAMERA_MODEL="pinhole-equi"
+CAMERA_MODEL="pinhole-radtan"
 # Repeat CAMERA_MODEL for each directory in dataset_dirs
 camera_models = " ".join([CAMERA_MODEL for _ in dataset_dirs])
 

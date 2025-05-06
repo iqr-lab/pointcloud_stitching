@@ -11,20 +11,6 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-
-
-add_executable(pcs-camera-grab-frames pcs-camera-grab-frames.cpp)
-target_link_libraries(
-    pcs-camera-grab-frames
-    realsense2
-)
-
-add_executable(pcs-camera-test-samples pcs-camera-test-samples.cpp)
-target_link_libraries(
-    pcs-camera-test-samples
-    realsense2
-)
-
 add_executable(pcs-camera-optimized pcs-camera-optimized.cpp)
 target_link_libraries(
     pcs-camera-optimized
@@ -35,8 +21,6 @@ set_target_properties(pcs-camera-optimized PROPERTIES COMPILE_FLAGS "-mavx -mfma
 
 install(
     TARGETS
-    pcs-camera-grab-frames
-    pcs-camera-test-samples
     pcs-camera-optimized
     RUNTIME DESTINATION
     ${CMAKE_INSTALL_PREFIX}/bin
