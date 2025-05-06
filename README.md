@@ -6,8 +6,6 @@ Scalable, multicamera distributed system for realtime pointcloud stitching at [I
 ### `host.py` Script
 This Python script is designed to run any arbitrary script on each of the edge nodes. We provide some useful scripts in [`edge_scripts/`](./edge_scripts). Run `python host.py -h` to see usage instructions.
 
-Note: `host.py` follows the `iqr-vision-i.local` hostnaming convention.
-
 ## Installation
 Different installation steps are required for installing on the edge nodes and the central node. The current instructions are tested on Ubuntu 22.04 LTS.
 
@@ -27,16 +25,18 @@ Different installation steps are required for installing on the edge nodes and t
 1. Ensure that your `cmake` version is 3.1 or later. If not, download and install a newer version from the [CMake website](https://cmake.org/download/)
 1. There are two methods for obtaining the source
     1. Release - Clone [this repository](https://github.com/iqr-lab/pointcloud_stitching) into `~/pointcloud_stitching`
-    1. FS Mount - This allows all edge servers to share one, live version of the source
+    1. FS Mount - This allows all edge servers to share one, live version of the source (resets on reboot)
         1. Create an SSH key on the edge server to the central computer
         1. Test the key and accept the fingerprint
         1. Install `sshfs`: `sudo apt install sshfs`
         1. Modify [`edge_scripts/mount.sh`](edge_scripts/mount.sh) on the central computer with the correct user login, central computer hostname, absolute paths, and identity file
         1. Add this edge server's hostname to [`HOSTS`](/HOSTS)
         1. Run `python host.py edge_scripts/mount.sh`
-        1. To set this FS mount as permanent, please follow [these instructions](https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-mount-remote-file-systems-over-ssh#step-3-permanently-mounting-the-remote-filesystem)
 1. Ensure that `~/pointcloud_stitching` is the path of the local repo
 1. Run `python host.py edge_scripts/build_edge.sh`
+
+## Calibration
+See [`calibration/README.md`](./calibration/README.md)
 
 ## Usage
 Each RealSense is connected to an edge node, which are all accessible through `ssh` from the central node. 

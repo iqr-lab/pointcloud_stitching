@@ -2,15 +2,17 @@
 
 Calibration is done with the Kalibr toolkit. Ensure that all edge servers are listed in [`HOSTS`](/HOSTS). Do NOT move any of the cameras physically during this process.
 
+Critically, this process generates a chain of transformations. Therefore, transformation matrices are pairwse-relative. If not all cameras can see the target board at the same time, you can link together separate chains.
+
 ## Installation
 Install `kalibr` following this [doc](https://iqr.cs.yale.edu/docs/computer-vision/kalibr.html).
 
-Install the dependencies for this module by running `python ../host.py edge_scripts/calibration_dependencies.sh`. This script assumes you have `uv` properly configured.
+Install the dependencies for this module by running `python host.py edge_scripts/calibration_dependencies.sh`. This script assumes you have `uv` properly configured. All scripts are intended to be at project root. Edge nodes are assumed to have the project files installed.
 
 ## Dataset Creation
-1. Run `python ../host.py edge_scripts/capture_images.sh`. While this is running, make sure to move the calibration target around for about 20 seconds.
+1. Run `python host.py edge_scripts/capture_images.sh`. While this is running, make sure to move the calibration target around for about 20 seconds.
 1. Update the local path and SSH keys as necessary in  [`edge_scripts/transfer_images.sh`](/edge_scripts/transfer_images.sh) 
-1. Run `python ../host.py edge_scripts/transfer_images.sh`. If images are still being captured, the script will error and tell you.
+1. Run `python host.py edge_scripts/transfer_images.sh`. If images are still being captured, the script will error and tell you.
 1. Run `python rename.py`
 1. Set the `FOLDER` env var to the absolute path of the local `dataset` directory
 1. Run the following to enter the `kalibr` Docker container terminal. Keep this open in a terminal window.
