@@ -1,5 +1,5 @@
 /*
- * Artur Balanuta, Evan Li
+ * Artur Balanuta, Evan Li, Neil Song
  * pcs-camera-optimized.cpp
  */
 

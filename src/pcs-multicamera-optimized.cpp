@@ -1,5 +1,5 @@
 /*
- * Evan Li, Artur Balanuta
+ * Evan Li, Artur Balanuta, Neil Song
  * pcs-multicamera-client.cpp
  *
  * Creates multiple TCP connections where each connection is sending
@@ -15,7 +15,6 @@
 #include <pcl/common/transforms.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/filters/voxel_grid.h>
-// #include "mqtt/client.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -368,11 +367,6 @@ int main(int argc, char **argv)
 
     // Camera 1 is the global frame
     transform[1] = Eigen::Matrix4f::Identity();
-
-    // transform[0] << 0.3025231603325914, -0.037877983751413435, -0.9523890989555219, 1.5804804132402446,
-    //     0.26399982722436316, 0.9634469990556576, 0.04554087434553869, 0.21769147762992574,
-    //     0.9158514228235328, -0.2652077268059462, 0.3014648121332488, 1.672651187749225,
-    //     0.0, 0.0, 0.0, 1.0;
 
     transform[0] << 0.19199692344029018, -0.045889554322095114, -0.9803220543237724, 1.7082854571998982,
         0.29050534336855743, 0.9567967685195846, 0.012107403718190302, 0.2016156185905812,
