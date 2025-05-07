@@ -1,5 +1,3 @@
-# Captures images at 4Hz from the camera for 10 seconds and saves them to a folder
-
 import cv2
 import os
 import sys
