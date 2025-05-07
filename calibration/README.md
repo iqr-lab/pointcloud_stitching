@@ -11,12 +11,13 @@ Install the dependencies for this module by running `python host.py edge_scripts
 
 ## Dataset Creation
 1. Run `python host.py edge_scripts/capture_images.sh`. While this is running, make sure to move the calibration target around for about 20 seconds.
+    - Larger target appearance + higher target orientation variance lead to better datasets 
 1. Update the local path and SSH keys as necessary in  [`edge_scripts/transfer_images.sh`](/edge_scripts/transfer_images.sh) 
 1. Run `python host.py edge_scripts/transfer_images.sh`. If images are still being captured, the script will error and tell you.
 1. Run `cd calibration && python rename.py`
 1. Set the `FOLDER` env var to the absolute path of the local `dataset` directory
     ```bash
-    set -x FOLDER $PWD/dataset
+    export FOLDER=$PWD/dataset # bash
     ```
 1. Run the following to enter the `kalibr` Docker container terminal. Keep this open in a terminal window.
     ```bash
@@ -28,7 +29,7 @@ Install the dependencies for this module by running `python host.py edge_scripts
 1. Run the following inside the `kalibr` container:
     ```bash
     source devel/setup.bash
-    rosrun kalibr kalibr_bagcreater --folder /data/ --output-bag /data/dataset.bag
+    rosrun kalibr kalibr_bagcreater --folder /data/ --output-bag /data/dataset.bag # create rosbag from raw dataset
     ```
 
 ## Calibration
