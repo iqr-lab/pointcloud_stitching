@@ -42,12 +42,14 @@ See [`calibration/README.md`](./calibration/README.md)
 Each RealSense is connected to an edge node, which are all accessible through `ssh` from the central node. 
 
 To start running, do the following:
-
+1. In [`src/pcs-multicamera-optimized.cpp`](src/pcs-multicamera-optimized.cpp), make sure you update the `const std::string IP_ADDRESS[NUM_CAMERAS]` array (as well as `const int NUM_CAMERAS`) with the desired values.
+    - Tip: run `ping [hostname] -4` to get the IP address of a hostname.
+    - If you have made changes here, make sure to run `make` inside the `build/` directory
 1. SSH into the edge nodes and run:
     ```
     ~/build/src/pcs-camera-optimized -s
     ```
-  
+
     If the servers are setup correctly, each one should say `Waiting for client...` 
 1. Then on the central node, run:
     ```
