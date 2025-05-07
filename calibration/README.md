@@ -36,10 +36,10 @@ Install the dependencies for this module by running `python host.py edge_scripts
 1. Generate the calibration command by running `python generate_calibration_command.py`
 1. Run this outputted command inside the `kalibr` container
 1. The calibration results will available at `dataset/dataset-camchain.yaml`. `T_cn_cnm1` is the transformation matrix to the **previous** camera's coordinate system. Keep this in mind when calculating final transformation matrices.
-1. In `/src/pcs-multicamera-optimized.cpp`, adjust the `transform` array as necessary. Make sure to rebuild before running.
+1. In `[src/pcs-multicamera-optimized.cpp](../src/pcs-multicamera-optimized.cpp)`, adjust the `transform` array in `int main()` as necessary. Make sure to rebuild before running.
 
 ## Ceiling Calibration
-1. The two ceiling cameras can be calibrated but they are relatively tricky - the best result obtained so far is this:
+1. The two ceiling cameras can be calibrated but they are relatively tricky - the best result obtained so far is the following:
     ```
     0.19199692344029018, -0.045889554322095114, -0.9803220543237724, 1.7082854571998982,
     0.29050534336855743, 0.9567967685195846, 0.012107403718190302, 0.2016156185905812,
